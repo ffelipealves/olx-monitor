@@ -2,7 +2,8 @@
 import sqlite3
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ def init_db() -> None:
                 preco       TEXT,
                 parcela     TEXT,
                 local       TEXT,
+                data_anuncio TEXT,
                 badges      TEXT,
                 url         TEXT,
                 visto_em    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -27,6 +29,21 @@ def init_db() -> None:
         conn.commit()
     logger.info("Banco de dados inicializado.")
 
+
+def limpar_anuncios_antigos(dias: int = 7) -> None:
+    """Remove anúncios mais antigos que X dias."""
+    limite = datetime.now() - timedelta(days=dias)
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.execute(
+            "DELETE FROM anuncios WHERE visto_em < ?",
+            (limite,)
+        )
+        conn.commit()
+    removidos = cursor.rowcount
+    if removidos:
+        logger.info(f"{removidos} anúncio(s) antigos removidos do banco.")
+    else:
+        logger.info("Nenhum anúncio antigo para remover.")
 
 def buscar_ids_conhecidos() -> set[str]:
     """Retorna todos os IDs já salvos no banco."""
@@ -46,8 +63,8 @@ def salvar_anuncios(anuncios: list[dict]) -> None:
     with sqlite3.connect(DB_PATH) as conn:
         conn.executemany(
             """
-            INSERT OR IGNORE INTO anuncios (id, titulo, preco, parcela, local, badges, url, visto_em)
-            VALUES (:id, :titulo, :preco, :parcela, :local, :badges, :url, :visto_em)
+            INSERT OR IGNORE INTO anuncios (id, titulo, preco, parcela, local, data_anuncio, badges, url, visto_em)
+            VALUES (:id, :titulo, :preco, :parcela, :local, :data_anuncio, :badges, :url, :visto_em)
             """,
             [
                 {**a, "badges": json.dumps(a["badges"], ensure_ascii=False), "visto_em": datetime.now()}

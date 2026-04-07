@@ -7,7 +7,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from config import CHECK_INTERVAL_MINUTES
 from scrapper import fetch_anuncios
-from storage import init_db, filtrar_novos, salvar_anuncios
+from storage import init_db, filtrar_novos, limpar_anuncios_antigos, salvar_anuncios
 from notifier import notificar_novos
 
 logging.basicConfig(
@@ -25,6 +25,7 @@ async def verificar_anuncios() -> None:
     await asyncio.sleep(delay)
 
     try:
+        limpar_anuncios_antigos(dias=15)
         anuncios = await fetch_anuncios()
         if not anuncios:
             logger.warning("Nenhum anúncio retornado pelo scraper.")

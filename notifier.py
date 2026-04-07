@@ -21,6 +21,9 @@ def _formatar_mensagem(anuncio: dict) -> str:
 
     linhas.append(f"📍 {anuncio['local']}")
 
+    if anuncio.get("data_anuncio"):
+        linhas.append(f"🕐 {anuncio['data_anuncio']}")
+
     if badges:
         linhas.append(f"🏷️ {badges}")
 

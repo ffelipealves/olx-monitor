@@ -153,12 +153,16 @@ def _parse_anuncios(html: str) -> list[dict]:
                 if parcela_tag else None
             )
 
+            # Data de publicação — dentro de bottombody
+            data_tag = card.select_one(".olx-adcard__date")
+
             anuncios.append({
                 "id": anuncio_id,
                 "titulo": _normalizar(titulo_tag.get_text(strip=True)) if titulo_tag else "Sem título",
                 "preco": _normalizar(preco_tag.get_text(strip=True)) if preco_tag else "Sem preço",
                 "parcela": parcela,
                 "local": _normalizar(local_tag.get_text(strip=True)) if local_tag else "Sem local",
+                "data_anuncio": _normalizar(data_tag.get_text(strip=True)) if data_tag else None,
                 "badges": [_normalizar(b) for b in badges],
                 "url": url,
             })
