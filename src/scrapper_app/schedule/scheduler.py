@@ -5,10 +5,10 @@ import random
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-from config import CHECK_INTERVAL_MINUTES
-from scrapper import fetch_anuncios
-from storage import init_db, filtrar_novos, limpar_anuncios_antigos, salvar_anuncios
-from notifier import notificar_novos
+from scrapper_app.config import CHECK_INTERVAL_MINUTES
+from scrapper_app.scrap.scrapper import fetch_anuncios
+from scrapper_app.db.storage import init_db, filtrar_novos, limpar_anuncios_antigos, salvar_anuncios
+from scrapper_app.notify.notifier import notificar_novos
 
 logging.basicConfig(
     level=logging.INFO,

@@ -3,7 +3,7 @@ import logging
 from playwright.async_api import async_playwright
 from playwright_stealth import Stealth
 from bs4 import BeautifulSoup
-from config import OLX_URL
+from scrapper_app.config import OLX_URL
 
 
 logging.basicConfig(
